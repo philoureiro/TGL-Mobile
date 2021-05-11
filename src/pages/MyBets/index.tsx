@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback, useState, useMemo } from 'react';
 import {
   Container, BoxButtonTypeOfGame, BoxAllGames,
-  TextTitle, TextFilters, ScrollView
+  TextTitle, TextFilters, ScrollView, FlatList, SafeAreaView
 } from './styles';
 import ButtonTypeOfGame from '../../components/ButtonTypeOfGame';
 import CustomHeader from '../../components/CustomHeader';
@@ -10,10 +10,22 @@ import api from '../../services/api';
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store'
 import { Alert } from 'react-native';
+import { IGameState } from '../../store/reducers';
 
 
 interface MyBetsProps {
   navigation: any;
+}
+
+interface IGameProps {
+  id: number,
+  type: string,
+  description: string,
+  price: number,
+  color: string,
+  range: number,
+  max_number: number,
+  min_cart_value: number,
 }
 
 
@@ -35,11 +47,19 @@ const MyBets: React.FC<MyBetsProps> = ({ navigation }) => {
   const gamesRedux = useSelector((state: RootState) => state.gameReducer);
   const [loading, setLoading] = useState(false);
 
-  console.log(gamesRedux.games)
-
   useEffect(() => {
-    console.log('=>front', gamesRedux.games.lenght)
-  }, [gamesRedux])
+    console.log('=>front', gamesRedux.games)
+  }, [gamesRedux.games])
+
+
+  const renderItem = useCallback(({ item }) => {
+    return (
+      <ButtonTypeOfGame key={item.id} onPress={() => Alert.alert('oi')} colorButton={'#fff'}
+        colorText={item.color} isMark={false} nameButton={item.type} >
+      </ButtonTypeOfGame>
+    )
+  }, [gamesRedux.games]);
+
 
   return (
     <>
@@ -49,20 +69,13 @@ const MyBets: React.FC<MyBetsProps> = ({ navigation }) => {
         <TextTitle>RECENT GAMES</TextTitle>
         <TextFilters>FIlters</TextFilters>
 
-
         <BoxButtonTypeOfGame>
-          <ScrollView horizontal={true} >
-            {
-              gamesRedux.games.map((button: any, index: number) => {
-                console.log('=>entrou')
-                return (
-                  <ButtonTypeOfGame key={index + 1} onPress={() => Alert.alert('oi')} colorButton={'#fff'}
-                    colorText={button.color} isMark={false} nameButton={button.type} >
-                  </ButtonTypeOfGame>
-                )
-              })
-            }
-          </ScrollView>
+          <FlatList
+            data={gamesRedux.games}
+            horizontal={true}
+            keyExtractor={(item: any) => item.id}
+            renderItem={renderItem}
+          />
         </BoxButtonTypeOfGame>
 
         <BoxAllGames>
@@ -82,3 +95,19 @@ const MyBets: React.FC<MyBetsProps> = ({ navigation }) => {
 }
 
 export default MyBets;
+
+/**
+ *
+ *  horizontal={true} >
+            {
+              gamesRedux.games.map((button: any, index: number) => {
+                console.log('=>entrou')
+                return (
+                  <ButtonTypeOfGame key={index + 1} onPress={() => Alert.alert('oi')} colorButton={'#fff'}
+                    colorText={button.color} isMark={false} nameButton={button.type} >
+                  </ButtonTypeOfGame>
+                )
+              })
+            }
+ *
+ */
