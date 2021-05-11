@@ -59,7 +59,6 @@ export const BoxDescriptionOfBet = styled.View`
   margin-top: 20px;
   margin-left: 20px;
   margin-right: 20px;
-  background-color: purple;
   min-height: 170px
 `;
 
@@ -86,7 +85,6 @@ export const GrayMarkup = styled.View`
 `;
 
 export const BoxAllNumbersGames = styled.View`
-  background-color: green ;
   margin-top: 15px;
   margin-left: 20px;
   margin-right: 20px;
@@ -94,6 +92,7 @@ export const BoxAllNumbersGames = styled.View`
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  flex-wrap: wrap;
 `;
 
 export const ScrollView = styled.ScrollView``;

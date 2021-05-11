@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Container, BoxAllNumbersGames, BoxButtonTypeOfGame,
   TextFilters, TextTitle, BoxDescriptionOfBet, FlatList, ScrollView,
@@ -11,9 +11,18 @@ import ButtonAround from '../../components/ButtonAround';
 import { getDataOfJson } from '../../services/apiii';
 import { useSelector } from 'react-redux';
 import { Alert } from 'react-native';
+import { RootState } from '../../store/'
 
 interface NewBetProps {
   navigation: any;
+}
+
+interface IGame {
+  numbersSelecteds: number[];
+  color: string;
+  price: number;
+  date: string;
+  type: string;
 }
 
 interface infoOfGamesProps {
@@ -28,18 +37,73 @@ interface infoOfGamesProps {
   }]
 }
 
-const NewBet: React.FC<NewBetProps> = ({ navigation }) => {
+interface IGameProps {
+  id: number,
+  type: string,
+  description: string,
+  price: number,
+  color: string,
+  range: number,
+  max_number: number,
+  min_cart_value: number,
+}
 
-  const [infoOfGames, setInfoOfGames] = useState<infoOfGamesProps>();
+
+const NewBet: React.FC<NewBetProps> = ({ navigation }) => {
+  const gamesRedux = useSelector((state: RootState) => state.gameReducer);
+  const [loading, setLoading] = useState(false);
+
+  const [games, setGames] = useState(gamesRedux.games);
+  const [gameSelected, setGameSelected] = useState<IGameProps>(gamesRedux.games[0]);
+
+  const [numbersSelecteds, setnumbersSelecteds] = useState<number[]>([]);
+  const [numbersSelectedsInCart, setnumbersSelectedsInCart] = useState<IGame[]>(
+    [],
+  );
+
 
 
   useEffect(() => {
     //setInfoOfGames(getDataOfJson());
+    console.log(numbersSelecteds);
+  }), [gameSelected, numbersSelecteds];
+
+  const handleClickTypeGame = useCallback((game) => {
+    setGameSelected(game)
+    setnumbersSelecteds([]);
+
+  }, [gameSelected])
+
+  const renderItem = useCallback(({ item }) => {
+    return (
+      <ButtonTypeOfGame key={item.id} onPress={() => handleClickTypeGame(item)} colorButton={item.color}
+        colorText={item.color} nameButton={item.type} isSelected={gameSelected === item} >
+      </ButtonTypeOfGame >
+    )
+  }, [gameSelected]);
+
+  const handleClickAroundButtons = useCallback((number) => {
+    // setnumbersSelecteds([...numbersSelecteds, number])
+    console.log('=>', number)
+    console.log('=>', numbersSelecteds.includes(number))
+    if (!numbersSelecteds.includes(number) && numbersSelecteds.length < gameSelected.max_number) {
+      setnumbersSelecteds([...numbersSelecteds, number].sort((a, b) => a - b))
+    } else {
+      setnumbersSelecteds(numbersSelecteds.filter(element => element !== number))
+    }
 
 
+  }, [numbersSelecteds]);
 
-  }), [];
+  const returnAroundButtons = useCallback(() => {
+    let aroundButtons = [];
+    for (let index = 0; index < gameSelected.range; index++) {
 
+      aroundButtons.push(<ButtonAround key={index + 1} onPress={() => handleClickAroundButtons(index + 1)} numberButton={index + 1}
+        color={gameSelected.color} isSelected={numbersSelecteds.includes(index + 1)} />)
+    }
+    return aroundButtons;
+  }, [gameSelected, numbersSelecteds]);
 
   return (
     <>
@@ -49,55 +113,30 @@ const NewBet: React.FC<NewBetProps> = ({ navigation }) => {
         </BoxButtonCart>
       </CustomHeader>
       <Container>
-        <TextTitle>NET BET FOR LOTOMANIA</TextTitle>
+        <TextTitle>{`NET BET FOR ${gameSelected?.type.toUpperCase()}`}</TextTitle>
         <TextFilters>Choose a game</TextFilters>
-        <BoxButtonTypeOfGame>
-          <ScrollView horizontal={true} >
-            {
 
-            }
-          </ScrollView>
+        <BoxButtonTypeOfGame>
+          <FlatList
+            data={games}
+            horizontal={true}
+            keyExtractor={(item: any) => item.id}
+            renderItem={renderItem}
+          />
         </BoxButtonTypeOfGame>
+
 
         <ScrollView>
           <BoxDescriptionOfBet>
             <TextFillYourBet>Fill your bet</TextFillYourBet>
             <TextDescriptionOfBet>
+              {`${gameSelected?.description}`}
             </TextDescriptionOfBet>
           </BoxDescriptionOfBet>
           <GrayMarkup />
 
           <BoxAllNumbersGames>
-            <ScrollView>
-              <BoxRowButtons>
-                <ButtonAround />
-                <ButtonAround />
-                <ButtonAround />
-                <ButtonAround />
-                <ButtonAround />
-              </BoxRowButtons>
-              <BoxRowButtons>
-                <ButtonAround />
-                <ButtonAround />
-                <ButtonAround />
-                <ButtonAround />
-                <ButtonAround />
-              </BoxRowButtons>
-              <BoxRowButtons>
-                <ButtonAround />
-                <ButtonAround />
-                <ButtonAround />
-                <ButtonAround />
-                <ButtonAround />
-              </BoxRowButtons>
-              <BoxRowButtons>
-                <ButtonAround />
-                <ButtonAround />
-                <ButtonAround />
-                <ButtonAround />
-                <ButtonAround />
-              </BoxRowButtons>
-            </ScrollView>
+            {gameSelected ? returnAroundButtons() : null}
           </BoxAllNumbersGames>
 
         </ScrollView>

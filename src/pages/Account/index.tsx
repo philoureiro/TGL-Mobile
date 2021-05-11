@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import CustomHeader from '../../components/CustomHeader';
 import IconAnt from 'react-native-vector-icons/AntDesign';
 import IconFont from 'react-native-vector-icons/FontAwesome';
+import IconMat from 'react-native-vector-icons/MaterialCommunityIcons';
 import BoxInput from '../../components/BoxInput'
 import api from '../../services/api'
 import { RootState } from '../../store/index'
@@ -30,7 +31,6 @@ interface IImageProps {
   uri: string,
   width: boolean,
 }
-
 
 const Account: React.FC<AccountProps> = ({ navigation }) => {
 
@@ -83,7 +83,6 @@ const Account: React.FC<AccountProps> = ({ navigation }) => {
         await dispatch(saveDataOfUser(userData));
         setLoading(false);
         Alert.alert('Dados alterados com sucesso!');
-        navigation.navigate('TabNavigator')
       })
 
     } catch (error) {
@@ -147,7 +146,12 @@ const Account: React.FC<AccountProps> = ({ navigation }) => {
             <IconFont name='picture-o' size={35} ></IconFont>
           </BoxIconCameraOrGalery>
 
-
+          {userRedux.email === 'adm@adm.com' ?
+            <BoxIconCameraOrGalery onPress={() => navigation.navigate('EditGames')}>
+              <IconMat name='database-edit' size={40} style={{ marginTop: -2 }} color={'#B5C401'}></IconMat>
+            </BoxIconCameraOrGalery>
+            : null
+          }
         </BoxCameraOrGalery>
 
 

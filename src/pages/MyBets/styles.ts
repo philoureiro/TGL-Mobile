@@ -41,3 +41,6 @@ export const BoxAllGames = styled.View`
   margin-right: 20px;
   flex: 1;
 `;
+
+export const FlatList = styled.FlatList``;
+export const SafeAreaView = styled.SafeAreaView``;

@@ -6,6 +6,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import TabNavigator from '../components/TabNavigator';
 import Drawer from '../components/DrawerNavigation';
 import UpdatePassword from '../pages/UpdatePassword';
+import EditGames from '../pages/EditGames'
 
 const Stack = createStackNavigator();
 const AppRoutes: React.FC = () => {
@@ -29,6 +30,11 @@ const AppRoutes: React.FC = () => {
       <Stack.Screen
         name="UpdatePassword"
         component={UpdatePassword}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="EditGames"
+        component={EditGames}
         options={{ headerShown: false }}
       />
       <Stack.Screen

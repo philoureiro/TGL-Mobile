@@ -11,6 +11,7 @@ import { useSelector } from 'react-redux'
 import { RootState } from '../../store'
 import { Alert } from 'react-native';
 import { IGameState } from '../../store/reducers';
+import { set } from 'react-native-reanimated';
 
 
 interface MyBetsProps {
@@ -47,18 +48,35 @@ const MyBets: React.FC<MyBetsProps> = ({ navigation }) => {
   const gamesRedux = useSelector((state: RootState) => state.gameReducer);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    console.log('=>front', gamesRedux.games)
-  }, [gamesRedux.games])
+  const [games, setGames] = useState(gamesRedux.games);
+  const [gamesSelecteds, setGamesSelecteds] = useState<IGameProps[]>([]);
 
+  useEffect(() => {
+    setGames(gamesRedux.games);
+    console.log(gamesSelecteds.length);
+
+  }, [gamesRedux.games, gamesSelecteds])
+
+  const handleClickTypeGame = useCallback((game) => {
+    if (gamesSelecteds.length > 0) {
+
+      gamesSelecteds.includes(game)
+        ? setGamesSelecteds(gamesSelecteds.filter(element => game.type !== element.type))
+        :
+        setGamesSelecteds([...gamesSelecteds, game])
+    } else {
+      setGamesSelecteds([game])
+    }
+
+  }, [gamesSelecteds])
 
   const renderItem = useCallback(({ item }) => {
     return (
-      <ButtonTypeOfGame key={item.id} onPress={() => Alert.alert('oi')} colorButton={'#fff'}
-        colorText={item.color} isMark={false} nameButton={item.type} >
-      </ButtonTypeOfGame>
+      <ButtonTypeOfGame key={item.id} onPress={() => handleClickTypeGame(item)} colorButton={item.color}
+        colorText={item.color} nameButton={item.type} isSelected={gamesSelecteds.includes(item)} >
+      </ButtonTypeOfGame >
     )
-  }, [gamesRedux.games]);
+  }, [gamesSelecteds]);
 
 
   return (
@@ -71,7 +89,7 @@ const MyBets: React.FC<MyBetsProps> = ({ navigation }) => {
 
         <BoxButtonTypeOfGame>
           <FlatList
-            data={gamesRedux.games}
+            data={games}
             horizontal={true}
             keyExtractor={(item: any) => item.id}
             renderItem={renderItem}

@@ -6,7 +6,7 @@ interface ButtonTypeOfGameProps {
   colorButton: string;
   nameButton: string;
   colorText: string;
-  isMark: boolean;
+  isSelected: boolean;
   onPress: () => void
 }
 
@@ -14,10 +14,8 @@ interface infoOfGamesProps {
   types?: {};
 }
 
-const ButtonTypeOfGame: React.FC<ButtonTypeOfGameProps> = ({ onPress, colorButton, nameButton, colorText }) => {
+const ButtonTypeOfGame: React.FC<ButtonTypeOfGameProps> = ({ onPress, colorButton, nameButton, colorText, isSelected }) => {
   const [isMark, setIsMark] = useState(false);
-  const [colorButtonCurrent, setcolorButtonCurrent] = useState(colorButton);
-  const [colorTextButtonCurrent, setcolorTextButtonCurrent] = useState(colorText);
   const dispatch = useDispatch();
 
 
@@ -25,24 +23,9 @@ const ButtonTypeOfGame: React.FC<ButtonTypeOfGameProps> = ({ onPress, colorButto
     (state: { data_button_type_is_mark: '' }) => state.data_button_type_is_mark,
   );
 
-
-  function handleClickButton() {
-
-    setIsMark(!isMark);
-    if (isMark) {
-
-      setcolorTextButtonCurrent(colorText);
-      setcolorButtonCurrent('#fff');
-    } else {
-
-      setcolorTextButtonCurrent('#fff');
-      setcolorButtonCurrent(colorText);
-    }
-  }
-
   return (
-    <Button style={{ backgroundColor: colorButtonCurrent, borderColor: colorText }} onPress={onPress}>
-      <TextButton style={{ color: colorTextButtonCurrent }}>{nameButton}</TextButton>
+    <Button style={{ backgroundColor: isSelected ? colorButton : '#fff', borderColor: colorButton }} onPress={onPress}>
+      <TextButton style={{ color: isSelected ? '#fff' : colorText }}>{nameButton}</TextButton>
     </Button>
   );
 }

@@ -10,6 +10,10 @@ export const Button = styled.TouchableOpacity`
   margin-right: 5px;
   margin-left: 5px;
   margin-bottom: 10px;
+  border-color: black;
+  border-style: solid;
+  border-width: 1px;
+  box-shadow: 0px 0px 2px gray;
 `;
 
 export const TextButton = styled.Text`

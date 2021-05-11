@@ -2,14 +2,17 @@ import React from 'react';
 import { Button, TextButton } from './styles';
 
 interface ButtonAroundProps {
-
+  numberButton: number;
+  isSelected: boolean;
+  color: string;
+  onPress: () => void;
 }
 
-const ButtonAround: React.FC<ButtonAroundProps> = () => {
+const ButtonAround: React.FC<ButtonAroundProps> = ({ numberButton, color, isSelected, onPress }) => {
 
   return (
-    <Button>
-      <TextButton>01</TextButton>
+    <Button style={{ backgroundColor: isSelected ? color : '#fff' }} onPress={onPress}>
+      <TextButton>{numberButton}</TextButton>
     </Button>
   );
 }
