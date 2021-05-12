@@ -59,7 +59,8 @@ export const BoxDescriptionOfBet = styled.View`
   margin-top: 20px;
   margin-left: 20px;
   margin-right: 20px;
-  min-height: 170px
+  min-height: 170px;
+  margin-bottom: 10px;
 `;
 
 export const FlatList = styled.FlatList`
@@ -105,3 +106,13 @@ export const BoxButtonCart = styled.TouchableOpacity`
   margin-top: -5px;
 
 `;
+
+export const BoxGameActionButtons = styled.View` 
+  flex: 1;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-right: 20px;
+  margin-left: 20px;
+`;
+

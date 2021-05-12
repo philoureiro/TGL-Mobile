@@ -3,6 +3,7 @@ import {
   Container, BoxAllNumbersGames, BoxButtonTypeOfGame,
   TextFilters, TextTitle, BoxDescriptionOfBet, FlatList, ScrollView,
   GrayMarkup, BoxRowButtons, TextFillYourBet, TextDescriptionOfBet, BoxButtonCart
+  , BoxGameActionButtons
 } from './styles';
 import IconZocial from 'react-native-vector-icons/Zocial';
 import ButtonTypeOfGame from '../../components/ButtonTypeOfGame';
@@ -12,6 +13,7 @@ import { getDataOfJson } from '../../services/apiii';
 import { useSelector } from 'react-redux';
 import { Alert } from 'react-native';
 import { RootState } from '../../store/'
+import GameActionButton from '../../components/GameActionButton';
 
 interface NewBetProps {
   navigation: any;
@@ -86,6 +88,7 @@ const NewBet: React.FC<NewBetProps> = ({ navigation }) => {
     // setnumbersSelecteds([...numbersSelecteds, number])
     console.log('=>', number)
     console.log('=>', numbersSelecteds.includes(number))
+
     if (!numbersSelecteds.includes(number) && numbersSelecteds.length < gameSelected.max_number) {
       setnumbersSelecteds([...numbersSelecteds, number].sort((a, b) => a - b))
     } else {
@@ -133,6 +136,40 @@ const NewBet: React.FC<NewBetProps> = ({ navigation }) => {
               {`${gameSelected?.description}`}
             </TextDescriptionOfBet>
           </BoxDescriptionOfBet>
+
+
+          {numbersSelecteds.length > 0
+            ?
+            <BoxGameActionButtons>
+              <GameActionButton
+                nameButton={'Complete game'}
+                onPress={() => { }}
+                backgroundColor={'#fff'}
+                color={'#B5C401'}
+                borderColor={'#B5C401'}
+              ></GameActionButton>
+
+              <GameActionButton
+                nameButton={'Clear game'}
+                onPress={() => setnumbersSelecteds([])}
+                backgroundColor={'#fff'}
+                color={'#B5C401'}
+                borderColor={'#B5C401'}
+              ></GameActionButton>
+
+              <GameActionButton
+                nameButton={'Add to cart'}
+                onPress={() => { Alert.alert('oi') }}
+                backgroundColor={'#B5C401'}
+                color={'#fff'}
+                borderColor={'#B5C401'}
+              >
+                <IconZocial name='cart' size={22} color='#fff'></IconZocial>
+              </GameActionButton>
+            </BoxGameActionButtons>
+            : null
+          }
+
           <GrayMarkup />
 
           <BoxAllNumbersGames>
