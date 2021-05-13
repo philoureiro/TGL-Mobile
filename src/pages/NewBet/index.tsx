@@ -3,17 +3,19 @@ import {
   Container, BoxAllNumbersGames, BoxButtonTypeOfGame,
   TextFilters, TextTitle, BoxDescriptionOfBet, FlatList, ScrollView,
   GrayMarkup, BoxRowButtons, TextFillYourBet, TextDescriptionOfBet, BoxButtonCart
-  , BoxGameActionButtons
+  , BoxGameActionButtons, BoxAllNumbersSelecteds
 } from './styles';
 import IconZocial from 'react-native-vector-icons/Zocial';
 import ButtonTypeOfGame from '../../components/ButtonTypeOfGame';
 import CustomHeader from '../../components/CustomHeader';
 import ButtonAround from '../../components/ButtonAround';
+import ButtonAroundSelected from '../../components/ButtonAroundSelected';
 import { getDataOfJson } from '../../services/apiii';
 import { useSelector } from 'react-redux';
 import { Alert } from 'react-native';
 import { RootState } from '../../store/'
 import GameActionButton from '../../components/GameActionButton';
+
 
 interface NewBetProps {
   navigation: any;
@@ -66,8 +68,7 @@ const NewBet: React.FC<NewBetProps> = ({ navigation }) => {
 
 
   useEffect(() => {
-    //setInfoOfGames(getDataOfJson());
-    console.log(numbersSelecteds);
+
   }), [gameSelected, numbersSelecteds];
 
   const handleClickTypeGame = useCallback((game) => {
@@ -85,16 +86,12 @@ const NewBet: React.FC<NewBetProps> = ({ navigation }) => {
   }, [gameSelected]);
 
   const handleClickAroundButtons = useCallback((number) => {
-    // setnumbersSelecteds([...numbersSelecteds, number])
-    console.log('=>', number)
-    console.log('=>', numbersSelecteds.includes(number))
 
     if (!numbersSelecteds.includes(number) && numbersSelecteds.length < gameSelected.max_number) {
       setnumbersSelecteds([...numbersSelecteds, number].sort((a, b) => a - b))
     } else {
       setnumbersSelecteds(numbersSelecteds.filter(element => element !== number))
     }
-
 
   }, [numbersSelecteds]);
 
@@ -107,6 +104,28 @@ const NewBet: React.FC<NewBetProps> = ({ navigation }) => {
     }
     return aroundButtons;
   }, [gameSelected, numbersSelecteds]);
+
+
+  function getRandom(minValue: number, maxValue: number) {
+    return Math.floor(Math.random() * maxValue + minValue);
+  }
+
+  const handleClickCompleteGame = useCallback(() => {
+
+    let currentArray = numbersSelecteds;
+    while (currentArray.length < gameSelected.max_number) {
+      const buttonRandom = getRandom(1, gameSelected.range);
+      if (
+        !numbersSelecteds.includes(buttonRandom) &&
+        numbersSelecteds.length < gameSelected.max_number
+      ) {
+        currentArray.push(buttonRandom);
+      }
+    }
+
+    setnumbersSelecteds([...currentArray].sort((a, b) => a - b));
+
+  }, [numbersSelecteds, gameSelected])
 
   return (
     <>
@@ -140,34 +159,47 @@ const NewBet: React.FC<NewBetProps> = ({ navigation }) => {
 
           {numbersSelecteds.length > 0
             ?
-            <BoxGameActionButtons>
-              <GameActionButton
-                nameButton={'Complete game'}
-                onPress={() => { }}
-                backgroundColor={'#fff'}
-                color={'#B5C401'}
-                borderColor={'#B5C401'}
-              ></GameActionButton>
+            <>
+              <BoxAllNumbersSelecteds>
+                {
+                  numbersSelecteds.map((button, index) => {
+                    return (
+                      <ButtonAroundSelected key={index + 1} onPress={() => handleClickAroundButtons(button)} numberButton={button}
+                        color={gameSelected.color} isSelected={true} />
+                    )
+                  })
+                }
+              </BoxAllNumbersSelecteds>
+              <BoxGameActionButtons>
+                <GameActionButton
+                  nameButton={'Complete game'}
+                  onPress={() => handleClickCompleteGame()}
+                  backgroundColor={'#fff'}
+                  color={'#B5C401'}
+                  borderColor={'#B5C401'}
+                ></GameActionButton>
 
-              <GameActionButton
-                nameButton={'Clear game'}
-                onPress={() => setnumbersSelecteds([])}
-                backgroundColor={'#fff'}
-                color={'#B5C401'}
-                borderColor={'#B5C401'}
-              ></GameActionButton>
+                <GameActionButton
+                  nameButton={'Clear game'}
+                  onPress={() => setnumbersSelecteds([])}
+                  backgroundColor={'#fff'}
+                  color={'#B5C401'}
+                  borderColor={'#B5C401'}
+                ></GameActionButton>
 
-              <GameActionButton
-                nameButton={'Add to cart'}
-                onPress={() => { Alert.alert('oi') }}
-                backgroundColor={'#B5C401'}
-                color={'#fff'}
-                borderColor={'#B5C401'}
-              >
-                <IconZocial name='cart' size={22} color='#fff'></IconZocial>
-              </GameActionButton>
-            </BoxGameActionButtons>
+                <GameActionButton
+                  nameButton={'Add to cart'}
+                  onPress={() => { Alert.alert('oi'); }}
+                  backgroundColor={'#B5C401'}
+                  color={'#fff'}
+                  borderColor={'#B5C401'}
+                >
+                  <IconZocial name='cart' size={22} color='#fff'></IconZocial>
+                </GameActionButton>
+              </BoxGameActionButtons>
+            </>
             : null
+
           }
 
           <GrayMarkup />
@@ -185,3 +217,5 @@ const NewBet: React.FC<NewBetProps> = ({ navigation }) => {
 }
 
 export default NewBet;
+
+

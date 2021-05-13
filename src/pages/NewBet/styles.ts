@@ -116,3 +116,15 @@ export const BoxGameActionButtons = styled.View`
   margin-left: 20px;
 `;
 
+
+export const BoxAllNumbersSelecteds = styled.View`
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  flex-wrap: wrap;
+  flex-direction: row;
+
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-bottom: 15px;
+`;

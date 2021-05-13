@@ -53,7 +53,6 @@ const MyBets: React.FC<MyBetsProps> = ({ navigation }) => {
 
   useEffect(() => {
     setGames(gamesRedux.games);
-    console.log(gamesSelecteds.length);
 
   }, [gamesRedux.games, gamesSelecteds])
 
@@ -114,18 +113,3 @@ const MyBets: React.FC<MyBetsProps> = ({ navigation }) => {
 
 export default MyBets;
 
-/**
- *
- *  horizontal={true} >
-            {
-              gamesRedux.games.map((button: any, index: number) => {
-                console.log('=>entrou')
-                return (
-                  <ButtonTypeOfGame key={index + 1} onPress={() => Alert.alert('oi')} colorButton={'#fff'}
-                    colorText={button.color} isMark={false} nameButton={button.type} >
-                  </ButtonTypeOfGame>
-                )
-              })
-            }
- *
- */
