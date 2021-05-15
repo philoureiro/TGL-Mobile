@@ -80,7 +80,7 @@ export const GrayMarkup = styled.View`
   background-color: #C1C1C1;
   height: 7px;
   width: 40px;
-  left: 170px;
+  left: 173px;
   border-radius: 15px;
   margin-top: 15px;
 `;

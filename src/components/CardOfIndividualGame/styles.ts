@@ -19,10 +19,11 @@ export const BoxNumberSelecteds = styled.View`
   width: 100%;
   margin-left: 20px;
   justify-content: space-around;
+  
 `;
 
 export const TextNumbers = styled.Text`
-  margin-top: -25px;
+  margin-top: 5px;
   font-size: 15px;
   font-weight: bold;
   color: #868686;

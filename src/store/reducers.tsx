@@ -2,7 +2,7 @@
 import React from 'react';
 import { combineReducers } from 'redux';
 
-import { SAVE_DATA_OF_USER, SAVE_BETS_OF_CART, SAVE_GAMES } from './actionTypes';
+import { SAVE_DATA_OF_USER, SAVE_BETS_OF_CART, SAVE_GAMES, DELETE_BET_OF_CART } from './actionTypes';
 export interface IUserState {
   user: {
     refreshToken: boolean,
@@ -34,6 +34,7 @@ export interface IBetState {
     {
       type: string,
       price: number,
+      color: string,
       numbers_selecteds: string,
     }
   ]
@@ -41,8 +42,8 @@ export interface IBetState {
 
 export interface IMainReducer {
   userReducer: IUserState;
-  cartReducer: IBetState;
-  gamesReducer: IGameState
+  betReducer: IBetState;
+  gameReducer: IGameState
 }
 
 const UserState: IUserState = {
@@ -61,6 +62,7 @@ const UserState: IUserState = {
 const MyBetsState: IBetState = {
   myBets: [{
     type: '',
+    color: '',
     price: 0,
     numbers_selecteds: '',
   }]
@@ -83,7 +85,7 @@ export const userReducer = (state: IUserState = UserState,
   action: any) => {
   switch (action.type) {
     case SAVE_DATA_OF_USER:
-      //    console.log('=>reducer', action.user)
+      // console.log('=>reducer', action.user)
       // const payload = action
       return {
         ...state, user: action.user
@@ -108,9 +110,34 @@ export const gameReducer = (state: IGameState = GamesState,
 };
 
 
+export const betReducer = (state: IBetState = MyBetsState,
+  action: any) => {
+  switch (action.type) {
+    case SAVE_BETS_OF_CART:
+      const arrayBets = state.myBets;
+      arrayBets.push(action.bet)
+
+      return {
+        ...state, myBets: arrayBets
+      }
+
+    case DELETE_BET_OF_CART:
+      const array = state.myBets.filter(bet => action.bet !== bet);
+      console.log(array)
+      return {
+        ...state, myBets: array
+      }
+
+    default:
+      return state;
+  }
+}
+
 const mainReducer = combineReducers({
+  betReducer,
   userReducer,
-  gameReducer
+  gameReducer,
+
 });
 
 export default mainReducer;

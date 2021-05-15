@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   createDrawerNavigator,
   DrawerContentScrollView,
@@ -17,18 +17,28 @@ import {
 import Account from '../../pages/Account';
 import CardOfIndividualGame from '../../components/CardOfIndividualGame';
 import NewBet from '../../pages/NewBet';
+import { useSelector, useDispatch } from 'react-redux';
+import { IMainReducer } from '../../store/reducers';
+import { deleteBetOfCart } from '../../store/actions'
+import { Alert } from 'react-native';
 
 
 interface DrawerProps {
   page: any;
 }
 
-const Drawer: React.FC<DrawerProps> = ({ page }) => {
+interface DrawerCustomProps {
+  navigation: any;
+  betsInCart: any;
+}
+
+const Drawer: React.FC<DrawerProps> = (props) => {
+  const { page } = props;
   const DrawerNav = createDrawerNavigator();
   return (
     <DrawerNav.Navigator
       drawerPosition="right"
-      drawerContent={(props) => <CustomDrawerComp {...props} />}>
+      drawerContent={(props) => <CustomDrawerComp  {...props} />}>
       <DrawerNav.Screen name="NewBet" component={NewBet} />
     </DrawerNav.Navigator>
   );
@@ -37,8 +47,16 @@ const Drawer: React.FC<DrawerProps> = ({ page }) => {
 export default Drawer;
 
 
-export const CustomDrawerComp = (props) => {
-  const { navigation } = props;
+export const CustomDrawerComp = ({ navigation }) => {
+  const betRedux = useSelector((state: IMainReducer) => state.betReducer);
+  const dispatch = useDispatch();
+  // const text = props.navigation.getParams('betsInCart', 'nothing sent');
+  // console.log(betRedux.myBets);
+
+  useEffect(() => {
+    console.log(betRedux.myBets)
+  }, [betRedux.myBets])
+
 
   return (
 
@@ -52,9 +70,19 @@ export const CustomDrawerComp = (props) => {
       </BoxTitleAndIcon>
       <ScrollView>
         <BoxInternalCart>
-          <CardOfIndividualGame hasIcon={{ nameIcon: 'trash-o', colorIcon: '#707070', sizeIcon: 25 }}></CardOfIndividualGame>
-          <CardOfIndividualGame hasIcon={{ nameIcon: 'trash-o', colorIcon: '#707070', sizeIcon: 25 }}></CardOfIndividualGame>
-          <CardOfIndividualGame hasIcon={{ nameIcon: 'trash-o', colorIcon: '#707070', sizeIcon: 25 }}></CardOfIndividualGame>
+
+          {
+            betRedux.myBets !== undefined ?
+              betRedux.myBets.map((bet: any, index: number) => {
+                return (
+                  <CardOfIndividualGame onPress={() => dispatch(deleteBetOfCart(bet))} key={index + 1} color={bet.color} numbersSelecteds={bet.numbersSelecteds} price={bet.price} date={bet.date} type={bet.type}
+                  ></CardOfIndividualGame>
+                )
+
+              })
+              : null
+          }
+
         </BoxInternalCart>
         <BoxPriceTotal>
           <TextCart>CART</TextCart>

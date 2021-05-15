@@ -1,5 +1,14 @@
-import { SAVE_DATA_OF_USER, SAVE_BETS_OF_CART, SAVE_GAMES} from './actionTypes';
-import {IGameState, IUserState} from './reducers'
+import { SAVE_DATA_OF_USER, SAVE_BETS_OF_CART, SAVE_GAMES, DELETE_BET_OF_CART} from './actionTypes';
+import {IGameState, IUserState, IBetState} from './reducers'
+
+
+interface IGame {
+  numbersSelecteds: number[];
+  color: string;
+  price: number;
+  date: string;
+  type: string;
+}
 
 export const saveDataOfUser = (dataUser: IUserState) => {
   return (
@@ -29,4 +38,18 @@ export const saveGames = (dataGames: IGameState) => {
 };
 
 
+export const saveBets = (betsInCart: IGame) => {
+  return (
+    {
+      type: SAVE_BETS_OF_CART,
+      bet: betsInCart
+    })
+};
 
+export const deleteBetOfCart = (bet: IGame) => {
+  return (
+    {
+      type: DELETE_BET_OF_CART,
+      bet: bet
+    })
+};

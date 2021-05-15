@@ -5,16 +5,20 @@ import {
   GrayMarkup, BoxRowButtons, TextFillYourBet, TextDescriptionOfBet, BoxButtonCart
   , BoxGameActionButtons, BoxAllNumbersSelecteds
 } from './styles';
+import { DrawerActions } from '@react-navigation/native';
 import IconZocial from 'react-native-vector-icons/Zocial';
 import ButtonTypeOfGame from '../../components/ButtonTypeOfGame';
 import CustomHeader from '../../components/CustomHeader';
 import ButtonAround from '../../components/ButtonAround';
 import ButtonAroundSelected from '../../components/ButtonAroundSelected';
 import { getDataOfJson } from '../../services/apiii';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { saveBets } from '../../store/actions'
 import { Alert } from 'react-native';
-import { RootState } from '../../store/'
+import { IMainReducer } from '../../store/reducers'
 import GameActionButton from '../../components/GameActionButton';
+
+
 
 
 interface NewBetProps {
@@ -54,22 +58,21 @@ interface IGameProps {
 
 
 const NewBet: React.FC<NewBetProps> = ({ navigation }) => {
-  const gamesRedux = useSelector((state: RootState) => state.gameReducer);
+  const gamesRedux = useSelector((state: IMainReducer) => state.gameReducer);
+  const betsRedux = useSelector((state: IMainReducer) => state.betReducer);
   const [loading, setLoading] = useState(false);
 
   const [games, setGames] = useState(gamesRedux.games);
-  const [gameSelected, setGameSelected] = useState<IGameProps>(gamesRedux.games[0]);
+  const [gameSelected, setGameSelected] = useState<IGameProps>(games[0]);
 
   const [numbersSelecteds, setnumbersSelecteds] = useState<number[]>([]);
-  const [numbersSelectedsInCart, setnumbersSelectedsInCart] = useState<IGame[]>(
-    [],
-  );
 
 
+  const dispatch = useDispatch();
 
   useEffect(() => {
-
-  }), [gameSelected, numbersSelecteds];
+    console.log(betsRedux.myBets.length);
+  }), [gameSelected];
 
   const handleClickTypeGame = useCallback((game) => {
     setGameSelected(game)
@@ -127,10 +130,31 @@ const NewBet: React.FC<NewBetProps> = ({ navigation }) => {
 
   }, [numbersSelecteds, gameSelected])
 
+  const handleAddToCart = useCallback(() => {
+    const dataAtual = new Date();
+    const dataFormat = ((dataAtual.getDate())) + "/" + ((dataAtual.getMonth() + 1)) + "/" + dataAtual.getFullYear();
+
+    let newBet: IGame = {
+      type: gameSelected.type,
+      price: gameSelected.price,
+      date: dataFormat,
+      color: gameSelected.color,
+      numbersSelecteds: numbersSelecteds,
+    };
+
+
+    dispatch(saveBets(newBet));
+    setnumbersSelecteds([]);
+  },
+    [numbersSelecteds],
+  );
+
   return (
     <>
       <CustomHeader navigation={navigation} >
-        <BoxButtonCart onPress={() => (navigation.openDrawer())} >
+        <BoxButtonCart onPress={() => (navigation.dispatch(DrawerActions.openDrawer(), {
+          betsInCart: "Detail Screen"
+        }))} >
           <IconZocial name='cart' size={42} color='#B5C401'></IconZocial>
         </BoxButtonCart>
       </CustomHeader>
@@ -189,7 +213,7 @@ const NewBet: React.FC<NewBetProps> = ({ navigation }) => {
 
                 <GameActionButton
                   nameButton={'Add to cart'}
-                  onPress={() => { Alert.alert('oi'); }}
+                  onPress={() => handleAddToCart()}
                   backgroundColor={'#B5C401'}
                   color={'#fff'}
                   borderColor={'#B5C401'}
