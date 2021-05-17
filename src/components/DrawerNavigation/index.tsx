@@ -1,9 +1,7 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   createDrawerNavigator,
-  DrawerContentScrollView,
-  DrawerItem
 } from '@react-navigation/drawer';
 
 import IconZocial from 'react-native-vector-icons/Zocial';
@@ -12,16 +10,17 @@ import IconAnt from 'react-native-vector-icons/AntDesign';
 import {
   Container, BoxIconExit, Title,
   BoxTitleAndIcon, ScrollView, BoxInternalCart, ButtonSave,
-  BoxPriceTotal, TextPriceCart, TextCart, TextTotalCart, TextButton
+  BoxPriceTotal, TextPriceCart, TextCart, TextTotalCart, TextButton, ActivityIndicator
 } from './styles';
 import Account from '../../pages/Account';
 import CardOfIndividualGame from '../../components/CardOfIndividualGame';
 import NewBet from '../../pages/NewBet';
 import { useSelector, useDispatch } from 'react-redux';
 import { IMainReducer } from '../../store/reducers';
-import { deleteBetOfCart } from '../../store/actions'
+import { deleteBetOfCart, eraseBetsOfUser } from '../../store/actions'
 import { Alert } from 'react-native';
-
+import api from '../../services/api'
+import MyBets from '../../pages/MyBets';
 
 interface DrawerProps {
   page: any;
@@ -32,9 +31,23 @@ interface DrawerCustomProps {
   betsInCart: any;
 }
 
+interface IGame {
+  numbersSelecteds: number[];
+  color: string;
+  price: number;
+  date: string;
+  type: string;
+}
+
+interface IBet {
+  type: string;
+  price: number;
+  numbers_selecteds: string;
+}
+
 const Drawer: React.FC<DrawerProps> = (props) => {
-  const { page, route } = props;
-  route.state !== undefined ? console.log(route.state.routes[0].params) : null
+  const { page } = props;
+
   // console.log(route.state);
   //console.log(route.state.routes[0].params);
   const DrawerNav = createDrawerNavigator();
@@ -50,16 +63,80 @@ const Drawer: React.FC<DrawerProps> = (props) => {
 export default Drawer;
 
 
-export const CustomDrawerComp = ({ navigation }) => {
+export const CustomDrawerComp = ({ navigation, route }) => {
   const betRedux = useSelector((state: IMainReducer) => state.betReducer);
   const dispatch = useDispatch();
-  // const text = props.navigation.getParams('betsInCart', 'nothing sent');
-  // console.log(betRedux.myBets);
-
+  const userRedux = useSelector((state: IMainReducer) => state.userReducer.user);
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
-    // console.log(betRedux.myBets)
+    //console.log('redux', betRedux.myBets)
   }, [betRedux.myBets])
 
+  const returnGamesInCart = useCallback(() => {
+    return betRedux.myBets.map((bet: any, index: number) => {
+      if (bet === undefined) {
+        dispatch(deleteBetOfCart(bet));
+      }
+      else {
+        return (
+          <CardOfIndividualGame onPress={() => dispatch(deleteBetOfCart(bet))} key={index + 1} color={bet?.color !== undefined ? bet.color : ''} numbersSelecteds={bet?.numbersSelecteds}
+            price={bet?.price !== undefined ? bet.price : ''} date={bet?.date !== undefined ? bet.date : ''} type={bet?.type}
+          ></CardOfIndividualGame>
+        )
+      }
+    })
+  }, [betRedux.myBets]);
+
+  const returnTotalPrice = useCallback(() => {
+    let price = 0
+    betRedux.myBets.forEach((bet) => {
+      if (bet === undefined) {
+        dispatch(deleteBetOfCart(bet));
+      } else {
+        price += bet.price
+      }
+    })
+    return price.toFixed(2).replace('.', ',');
+  }, [betRedux.myBets])
+
+  const handleClickButtonSave = useCallback(async () => {
+    setLoading(true);
+    if (returnTotalPrice() < '30,00') {
+      Alert.alert('O valor de compra é menor do que 30 reais.')
+      setLoading(false);
+    } else {
+      try {
+        const config = {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${userRedux.token.token}`
+          }
+        }
+
+        let cart: IBet[] = [];
+
+        betRedux.myBets.forEach((bet) => {
+          const currentBet = {
+            type: bet.type,
+            price: bet.price,
+            numbers_selecteds: JSON.stringify(bet.numbersSelecteds).replace('[', '').replace(']', '')
+          }
+          cart.push(currentBet)
+        })
+
+        await api.post('/bets', { cart: cart, totalPrice: 50 }, config).then(async response => {
+          dispatch(eraseBetsOfUser())
+          setLoading(false);
+          navigation.closeDrawer()
+        });
+      } catch (error) {
+        setLoading(false);
+        console.log('=>erro', error)
+        Alert.alert('Erro ao salvar dados.')
+      }
+    }
+
+  }, [betRedux.myBets])
 
   return (
 
@@ -71,36 +148,29 @@ export const CustomDrawerComp = ({ navigation }) => {
         <IconZocial name='cart' size={35} color='#B5C300'></IconZocial>
         <Title>CART</Title>
       </BoxTitleAndIcon>
-      <ScrollView>
-        <BoxInternalCart>
 
-          {/* {
-            betRedux.myBets !== undefined ?
-              betRedux.myBets.map((bet: any, index: number) => {
-                return (
-                  <CardOfIndividualGame onPress={() => dispatch(deleteBetOfCart(bet))} key={index + 1} color={bet.color} numbersSelecteds={bet.numbersSelecteds} price={bet.price} date={bet.date} type={bet.type}
-                  ></CardOfIndividualGame>
-                )
+      <BoxInternalCart>
+        <ScrollView>
+          {returnGamesInCart()}
+        </ScrollView>
+      </BoxInternalCart>
 
-              })
-              : null
-          } */}
+      <BoxPriceTotal>
+        <TextCart>CART</TextCart>
+        <TextTotalCart>TOTAL:</TextTotalCart>
+        <TextPriceCart>{`R$ ${returnTotalPrice()}`}</TextPriceCart>
 
-        </BoxInternalCart>
-        <BoxPriceTotal>
-          <TextCart>CART</TextCart>
-          <TextTotalCart>TOTAL:</TextTotalCart>
-          <TextPriceCart>R$ 7,50</TextPriceCart>
-        </BoxPriceTotal>
-
-        <ButtonSave onPress={() => (navigation.navigate('SignUp'))}>
+      </BoxPriceTotal>
+      {loading ?
+        <ActivityIndicator size="large" color="#B5C401" />
+        :
+        <ButtonSave onPress={() => handleClickButtonSave()}>
           <TextButton style={{ color: '#B5C401', marginLeft: 10 }}>Save</TextButton>
           <IconAnt name='arrowright' size={30} color='#B5C401'></IconAnt>
         </ButtonSave>
-      </ScrollView>
+      }
 
     </Container >
-
 
   );
 };

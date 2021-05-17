@@ -77,6 +77,7 @@ const SignIn: React.FC<SignInProps> = ({ navigation }) => {
 
     } catch (error) {
       setLoading(false);
+      console.log(error)
       Alert.alert('Erro ao logar!');
     }
 

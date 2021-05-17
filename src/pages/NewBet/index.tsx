@@ -138,21 +138,24 @@ const NewBet: React.FC<NewBetProps> = ({ navigation }) => {
     const dataAtual = new Date();
     const dataFormat = ((dataAtual.getDate())) + "/" + ((dataAtual.getMonth() + 1)) + "/" + dataAtual.getFullYear();
 
-    let newBet: IGame = {
-      type: gameSelected.type,
-      price: gameSelected.price,
-      date: dataFormat,
-      color: gameSelected.color,
-      numbersSelecteds: numbersSelecteds,
-    };
+    if (numbersSelecteds.length < gameSelected.max_number) {
+      Alert.alert(`Precisamos de ${gameSelected.max_number} números para salvar a aposta!`)
+    } else {
+      let newBet: IGame = {
+        type: gameSelected.type,
+        price: gameSelected.price,
+        date: dataFormat,
+        color: gameSelected.color,
+        numbersSelecteds: numbersSelecteds,
+      };
 
-    const array = [...numbersSelectedsInCart];
-    array.push(newBet);
-    setnumbersSelectedsInCart(array);
-    setnumbersSelecteds([]);
+      const array = [...numbersSelectedsInCart];
+      array.push(newBet);
+      setnumbersSelectedsInCart(array);
+      setnumbersSelecteds([]);
 
-    //dispatch(saveBets(newBet));
-
+      dispatch(saveBets(newBet));
+    }
   },
     [numbersSelecteds],
   );

@@ -1,4 +1,4 @@
-import { SAVE_DATA_OF_USER, SAVE_BETS_OF_CART, SAVE_GAMES, DELETE_BET_OF_CART} from './actionTypes';
+import { SAVE_DATA_OF_USER, SAVE_BETS_OF_CART, SAVE_GAMES, DELETE_BET_OF_CART, ERASE_BETS_OF_USER} from './actionTypes';
 import {IGameState, IUserState, IBetState} from './reducers'
 
 
@@ -53,3 +53,9 @@ export const deleteBetOfCart = (bet: IGame) => {
       bet: bet
     })
 };
+
+export const eraseBetsOfUser = () =>{
+  return {
+    type: ERASE_BETS_OF_USER,
+  }
+}

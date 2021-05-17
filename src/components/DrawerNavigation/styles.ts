@@ -2,7 +2,6 @@ import styled from 'styled-components/native';
 
 export const Container = styled.View`
   flex:1;
-  height: 700px;
 `;
 
 export const BoxTitleAndIcon = styled.View`
@@ -43,7 +42,7 @@ export const BoxPriceTotal = styled.View`
   margin-top: 30px;
   margin-left: 20px;
   margin-right: 20px;
-  flex: 1;
+  height: 30px;
 `;
 
 export const TextCart = styled.Text`
@@ -93,3 +92,7 @@ export const TextButton = styled.Text`
  margin-right: 10px;
 `;
 
+export const ActivityIndicator = styled.ActivityIndicator`
+margin-bottom: 20px;
+margin-top: 20px;
+`;

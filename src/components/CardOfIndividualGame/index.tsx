@@ -22,7 +22,7 @@ const CardOfIndividualGame: React.FC<CardOfIndividualGameProps> = ({ numbersSele
     <Container>
       <MarkupGame style={{ backgroundColor: color }} />
       <BoxNumberSelecteds>
-        <TextNumbers>{JSON.stringify(numbersSelecteds)}</TextNumbers>
+        <TextNumbers>{JSON.stringify(numbersSelecteds).replace('[', '').replace(']', '')}</TextNumbers>
         <TextData>{`${date} - ${price}`}</TextData>
 
         <ButtonTrash onPress={onPress}>

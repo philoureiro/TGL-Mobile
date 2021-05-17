@@ -2,7 +2,7 @@
 import React from 'react';
 import { combineReducers } from 'redux';
 
-import { SAVE_DATA_OF_USER, SAVE_BETS_OF_CART, SAVE_GAMES, DELETE_BET_OF_CART } from './actionTypes';
+import { SAVE_DATA_OF_USER, SAVE_BETS_OF_CART, SAVE_GAMES, DELETE_BET_OF_CART, ERASE_BETS_OF_USER } from './actionTypes';
 export interface IUserState {
   user: {
     refreshToken: boolean,
@@ -59,13 +59,8 @@ const UserState: IUserState = {
   }
 };
 
-const MyBetsState: IBetState = {
-  myBets: [{
-    type: '',
-    color: '',
-    price: 0,
-    numbers_selecteds: '',
-  }]
+const MyBetsState: any = {
+  myBets: []
 }
 
 const GamesState: IGameState = {
@@ -126,6 +121,11 @@ export const betReducer = (state: IBetState = MyBetsState,
       console.log(array)
       return {
         ...state, myBets: array
+      }
+
+    case ERASE_BETS_OF_USER:
+      return {
+        ...state, myBets: []
       }
 
     default:
