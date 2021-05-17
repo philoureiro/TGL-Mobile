@@ -66,13 +66,17 @@ const NewBet: React.FC<NewBetProps> = ({ navigation }) => {
   const [gameSelected, setGameSelected] = useState<IGameProps>(games[0]);
 
   const [numbersSelecteds, setnumbersSelecteds] = useState<number[]>([]);
+  const [numbersSelectedsInCart, setnumbersSelectedsInCart] = useState<IGame[]>(
+    [],
+  );
 
 
   const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log(betsRedux.myBets.length);
-  }), [gameSelected];
+
+    //console.log('numbersSelecteds', numbersSelectedsInCart);
+  }), [gameSelected, numbersSelectedsInCart];
 
   const handleClickTypeGame = useCallback((game) => {
     setGameSelected(game)
@@ -142,19 +146,32 @@ const NewBet: React.FC<NewBetProps> = ({ navigation }) => {
       numbersSelecteds: numbersSelecteds,
     };
 
-
-    dispatch(saveBets(newBet));
+    const array = [...numbersSelectedsInCart];
+    array.push(newBet);
+    setnumbersSelectedsInCart(array);
     setnumbersSelecteds([]);
+
+    //dispatch(saveBets(newBet));
+
   },
     [numbersSelecteds],
   );
 
+
+  const handleOpenCart = useCallback((navigation) => {
+
+    numbersSelectedsInCart.length > 0 ?
+      navigation.setParams({
+        cart: numbersSelectedsInCart,
+      }) : null
+
+    navigation.openDrawer()
+  }, [numbersSelectedsInCart]);
+
   return (
     <>
       <CustomHeader navigation={navigation} >
-        <BoxButtonCart onPress={() => (navigation.dispatch(DrawerActions.openDrawer(), {
-          betsInCart: "Detail Screen"
-        }))} >
+        <BoxButtonCart onPress={() => handleOpenCart(navigation)} >
           <IconZocial name='cart' size={42} color='#B5C401'></IconZocial>
         </BoxButtonCart>
       </CustomHeader>

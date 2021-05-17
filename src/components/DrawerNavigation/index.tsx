@@ -33,7 +33,10 @@ interface DrawerCustomProps {
 }
 
 const Drawer: React.FC<DrawerProps> = (props) => {
-  const { page } = props;
+  const { page, route } = props;
+  route.state !== undefined ? console.log(route.state.routes[0].params) : null
+  // console.log(route.state);
+  //console.log(route.state.routes[0].params);
   const DrawerNav = createDrawerNavigator();
   return (
     <DrawerNav.Navigator
@@ -54,7 +57,7 @@ export const CustomDrawerComp = ({ navigation }) => {
   // console.log(betRedux.myBets);
 
   useEffect(() => {
-    console.log(betRedux.myBets)
+    // console.log(betRedux.myBets)
   }, [betRedux.myBets])
 
 
@@ -71,7 +74,7 @@ export const CustomDrawerComp = ({ navigation }) => {
       <ScrollView>
         <BoxInternalCart>
 
-          {
+          {/* {
             betRedux.myBets !== undefined ?
               betRedux.myBets.map((bet: any, index: number) => {
                 return (
@@ -81,7 +84,7 @@ export const CustomDrawerComp = ({ navigation }) => {
 
               })
               : null
-          }
+          } */}
 
         </BoxInternalCart>
         <BoxPriceTotal>

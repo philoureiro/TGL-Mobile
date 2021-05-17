@@ -14,7 +14,6 @@ import { saveDataOfUser, saveGames } from '../../store/actions';
 import { IUserState } from '../../store/reducers'
 import { RootState } from '../../store'
 
-
 import api from '../../services/api'
 
 interface SignInProps {

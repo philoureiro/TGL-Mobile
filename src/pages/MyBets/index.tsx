@@ -97,12 +97,12 @@ const MyBets: React.FC<MyBetsProps> = ({ navigation }) => {
 
         <BoxAllGames>
           <ScrollView>
+            {/* <CardOfIndividualGame />
             <CardOfIndividualGame />
             <CardOfIndividualGame />
             <CardOfIndividualGame />
             <CardOfIndividualGame />
-            <CardOfIndividualGame />
-            <CardOfIndividualGame />
+            <CardOfIndividualGame /> */}
           </ScrollView>
         </BoxAllGames>
 
