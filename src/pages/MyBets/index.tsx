@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback, useState, useMemo } from 'react';
 import {
-  Container, BoxButtonTypeOfGame, BoxAllGames,
+  Container, BoxButtonTypeOfGame, BoxAllGames, ActivityIndicator,
   TextTitle, TextFilters, ScrollView, FlatList, SafeAreaView
 } from './styles';
 import ButtonTypeOfGame from '../../components/ButtonTypeOfGame';
@@ -10,7 +10,7 @@ import api from '../../services/api';
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store'
 import { Alert } from 'react-native';
-import { IGameState } from '../../store/reducers';
+import { IGameState, IMainReducer } from '../../store/reducers';
 import { set } from 'react-native-reanimated';
 
 
@@ -44,17 +44,47 @@ interface infoOfGamesProps {
 
 const MyBets: React.FC<MyBetsProps> = ({ navigation }) => {
 
-  const userRedux = useSelector((state: RootState) => state.userReducer);
-  const gamesRedux = useSelector((state: RootState) => state.gameReducer);
+  const userRedux = useSelector((state: IMainReducer) => state.userReducer);
+  const gamesRedux = useSelector((state: IMainReducer) => state.gameReducer);
   const [loading, setLoading] = useState(false);
 
   const [games, setGames] = useState(gamesRedux.games);
   const [gamesSelecteds, setGamesSelecteds] = useState<IGameProps[]>([]);
+  const [betsOfUserOnTheApi, SetBetsOfUserOnTheApi] = useState([]);
 
   useEffect(() => {
-    setGames(gamesRedux.games);
+    setLoading(true);
 
-  }, [gamesRedux.games, gamesSelecteds])
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${userRedux.user.token.token}`
+      }
+    }
+
+    let filter = [];
+    try {
+      async function loadingDataOnTheAPI() {
+        filter = gamesSelecteds.map((game) => {
+          return (game.type);
+        })
+        await api.post('/bets/filter', { filter: filter }, config).then(response => {
+          //console.log('=>', response.data)
+          SetBetsOfUserOnTheApi(response.data)
+          setLoading(false);
+          // });
+        })
+      }
+
+      loadingDataOnTheAPI();
+
+    } catch (error) {
+      setLoading(false);
+      console.log('=>error', error)
+      Alert.alert('Erro ao buscar dados na api.')
+
+    }
+  }, [gamesSelecteds, games])
 
   const handleClickTypeGame = useCallback((game) => {
     if (gamesSelecteds.length > 0) {
@@ -68,6 +98,19 @@ const MyBets: React.FC<MyBetsProps> = ({ navigation }) => {
     }
 
   }, [gamesSelecteds])
+
+  const returnFilteredsBets = useCallback(() => {
+    return betsOfUserOnTheApi.map((bet: any, index: number) => {
+      const date = bet.updated_at.split(' ')[0].replaceAll('-', '/')
+      const price = `(R$ ${bet.price.toFixed(2).replace('.', ',')})`
+      const color = games.filter((game) => game.type === bet.type)[0].color
+      return (
+        <CardOfIndividualGame onPress={() => { }} color={color} key={index + 1} hasIconTrash={false} numbersSelecteds={bet.numbers_selecteds}
+          price={price} date={date} type={bet.type}
+        ></CardOfIndividualGame>
+      )
+    })
+  }, [betsOfUserOnTheApi]);
 
   const renderItem = useCallback(({ item }) => {
     return (
@@ -96,14 +139,18 @@ const MyBets: React.FC<MyBetsProps> = ({ navigation }) => {
         </BoxButtonTypeOfGame>
 
         <BoxAllGames>
-          <ScrollView>
-            {/* <CardOfIndividualGame />
-            <CardOfIndividualGame />
-            <CardOfIndividualGame />
-            <CardOfIndividualGame />
-            <CardOfIndividualGame />
-            <CardOfIndividualGame /> */}
-          </ScrollView>
+
+
+          {
+
+            loading ?
+              <ActivityIndicator size="large" color="#B5C401" />
+              :
+              <ScrollView>
+                {returnFilteredsBets()}
+              </ScrollView>
+          }
+
         </BoxAllGames>
 
       </Container>

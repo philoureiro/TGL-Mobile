@@ -42,7 +42,6 @@ const EditGames: React.FC<EditGamesProps> = ({ navigation }) => {
 
   const handleClickButton = useCallback(async () => {
 
-    console.log(type, description, color, price, max_number, min_cart_value, range);
     setLoading(true);
 
     const config = {
@@ -65,7 +64,7 @@ const EditGames: React.FC<EditGamesProps> = ({ navigation }) => {
     try {
 
       await api.post('/games', data, config).then(async (response) => {
-        console.log('=> response', response.data)
+
         const games = gamesRedux;
         games.push(data);
 

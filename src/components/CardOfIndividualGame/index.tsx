@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Container, MarkupGame,
   BoxNumberSelecteds, TextNumbers, TextData,
@@ -6,28 +6,43 @@ import {
 } from './styles';
 
 import IconFont from 'react-native-vector-icons/FontAwesome';
+import { IMainReducer } from '../../store/reducers';
+import { useSelector } from 'react-redux';
 interface CardOfIndividualGameProps {
-  numbersSelecteds: number[];
-  color: string;
-  price: number;
+  numbersSelecteds: string;
+  price: string;
   date: string;
   type: string;
-  onPress: () => void
+  hasIconTrash: boolean;
+  onPress: () => void;
+  color: string;
 }
 
-const CardOfIndividualGame: React.FC<CardOfIndividualGameProps> = ({ numbersSelecteds, color, price, date, type, onPress }) => {
+const CardOfIndividualGame: React.FC<CardOfIndividualGameProps> = ({ numbersSelecteds, color, hasIconTrash, price, date, type, onPress }) => {
+
+
+
+  useEffect(() => {
+
+  }, [numbersSelecteds])
 
 
   return (<>
     <Container>
       <MarkupGame style={{ backgroundColor: color }} />
       <BoxNumberSelecteds>
-        <TextNumbers>{JSON.stringify(numbersSelecteds).replace('[', '').replace(']', '')}</TextNumbers>
+        <TextNumbers>{numbersSelecteds}</TextNumbers>
         <TextData>{`${date} - ${price}`}</TextData>
 
-        <ButtonTrash onPress={onPress}>
-          <IconFont name={'trash-o'} size={25} color={'black'}></IconFont>
-        </ButtonTrash>
+        {
+          hasIconTrash
+            ?
+            <ButtonTrash onPress={onPress}>
+              <IconFont name={'trash-o'} size={25} color={'black'}></IconFont>
+            </ButtonTrash>
+            : null
+        }
+
 
         <TextNameOfGame>{type}</TextNameOfGame>
 

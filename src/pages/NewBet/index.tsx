@@ -26,23 +26,11 @@ interface NewBetProps {
 }
 
 interface IGame {
-  numbersSelecteds: number[];
+  numbers_selecteds: string;
   color: string;
   price: number;
   date: string;
   type: string;
-}
-
-interface infoOfGamesProps {
-  types: [{
-    type: string,
-    description: string;
-    range: number,
-    price: number,
-    'max-number': number,
-    color: string,
-    'min-cart-value': number,
-  }]
 }
 
 interface IGameProps {
@@ -146,7 +134,7 @@ const NewBet: React.FC<NewBetProps> = ({ navigation }) => {
         price: gameSelected.price,
         date: dataFormat,
         color: gameSelected.color,
-        numbersSelecteds: numbersSelecteds,
+        numbers_selecteds: `${JSON.stringify(numbersSelecteds).replace('[', '').replace(']', '')}`
       };
 
       const array = [...numbersSelectedsInCart];

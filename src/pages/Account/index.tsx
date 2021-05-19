@@ -50,7 +50,7 @@ const Account: React.FC<AccountProps> = ({ navigation }) => {
 
   const handleClickLogin = useCallback(async () => {
     setLoading(true);
-    console.log(userRedux)
+
     try {
       const config = {
         headers: {
@@ -103,7 +103,6 @@ const Account: React.FC<AccountProps> = ({ navigation }) => {
       quality: 1,
     });
 
-    console.log(result);
 
     if (!result.cancelled) {
       setImage(result.uri);
@@ -118,8 +117,6 @@ const Account: React.FC<AccountProps> = ({ navigation }) => {
       aspect: [4, 3],
       quality: 1,
     });
-
-    console.log(result);
 
     if (!result.cancelled) {
       setImage(result.uri);

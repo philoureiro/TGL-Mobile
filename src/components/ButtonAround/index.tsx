@@ -8,7 +8,11 @@ interface ButtonAroundProps {
   onPress: () => void;
 }
 
-const ButtonAround: React.FC<ButtonAroundProps> = ({ numberButton, color, isSelected, onPress }) => {
+const ButtonAround: React.FC<ButtonAroundProps> = ({
+  numberButton,
+  color,
+  isSelected,
+  onPress }) => {
 
   return (
     <Button style={{ backgroundColor: isSelected ? color : '#fff' }} onPress={onPress}>

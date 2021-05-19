@@ -3,7 +3,7 @@ import {IGameState, IUserState, IBetState} from './reducers'
 
 
 interface IGame {
-  numbersSelecteds: number[];
+  numbers_selecteds: string;
   color: string;
   price: number;
   date: string;

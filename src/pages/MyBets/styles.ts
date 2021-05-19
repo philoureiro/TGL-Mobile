@@ -44,3 +44,6 @@ export const BoxAllGames = styled.View`
 
 export const FlatList = styled.FlatList``;
 export const SafeAreaView = styled.SafeAreaView``;
+export const ActivityIndicator = styled.ActivityIndicator`
+    margin-top: 200px;
+`;
