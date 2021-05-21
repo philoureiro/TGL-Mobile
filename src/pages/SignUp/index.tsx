@@ -24,9 +24,6 @@ const SignUp: React.FC<SignUpProps> = ({ navigation }) => {
   const handleClickButton = useCallback(async () => {
 
     try {
-
-      console.log('=>click', userName, email, password)
-
       await api.post('/users', {
         "username": userName,
         "email": email,

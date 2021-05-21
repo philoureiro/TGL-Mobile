@@ -47,6 +47,7 @@ const Cart: React.FC<CartProps> = ({ navigation }) => {
         betRedux.myBets.forEach((bet: any, index: number) => {
             if (bet === undefined) {
                 dispatch(deleteBetOfCart(bet));
+                //.toFixed(2).replace('.', ',')})`
             } else {
                 const price = `(R$ ${bet.price.toFixed(2).replace('.', ',')})`
                 const numbers_selecteds = bet.numbers_selecteds
@@ -63,7 +64,7 @@ const Cart: React.FC<CartProps> = ({ navigation }) => {
     }, [betRedux.myBets]);
 
     const returnTotalPrice = useCallback(() => {
-        let price = 0
+        let price = 0;
         betRedux.myBets.forEach((bet) => {
             if (bet === undefined) {
                 dispatch(deleteBetOfCart(bet));
@@ -71,6 +72,8 @@ const Cart: React.FC<CartProps> = ({ navigation }) => {
                 price += bet.price
             }
         })
+        // console.log(typeof price)
+        // price = parseFloat(price);
         return price.toFixed(2).replace('.', ',');
     }, [betRedux.myBets])
 

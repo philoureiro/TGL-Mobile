@@ -95,7 +95,7 @@ export const gameReducer = (state: IGameState = GamesState,
   action: any) => {
   switch (action.type) {
     case SAVE_GAMES:
-      //   console.log('=>reducer game', action.games)
+      //console.log('=>reducer game', action.games)
       return {
         ...state, games: action.games
       }
@@ -110,6 +110,8 @@ export const betReducer = (state: IBetState = MyBetsState,
   switch (action.type) {
     case SAVE_BETS_OF_CART:
       const arrayBets = state.myBets;
+      // console.log(action.bet);
+      //console.log('typeeeee =>', typeof action.bet.numbers_selecteds);
       arrayBets.push(action.bet)
 
       return {
@@ -118,7 +120,7 @@ export const betReducer = (state: IBetState = MyBetsState,
 
     case DELETE_BET_OF_CART:
       const array = state.myBets.filter(bet => action.bet !== bet);
-      console.log(array)
+      //console.log(array)
       return {
         ...state, myBets: array
       }

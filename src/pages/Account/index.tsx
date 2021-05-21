@@ -40,6 +40,7 @@ const Account: React.FC<AccountProps> = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const [secureText, setSecureText] = useState(true);
   const [image, setImage] = useState<IImageProps>();
+  const [dataApi, setDataAPI] = useState();
   const dispatch = useDispatch();
 
   const userRedux = useSelector((state: RootState) => state.userReducer.user);
@@ -122,6 +123,7 @@ const Account: React.FC<AccountProps> = ({ navigation }) => {
       setImage(result.uri);
     }
   }, [image])
+
 
   return (
     <>

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import IconAnt from 'react-native-vector-icons/AntDesign';
 import {
   Container, MarkupLogo, TextLogo, TextCopyright,
@@ -13,14 +13,11 @@ import IconFont from 'react-native-vector-icons/FontAwesome';
 import { useSelector, useDispatch } from 'react-redux'
 import { RootState } from '../../store'
 import { saveGames } from '../../store/actions'
-import { IGameState } from '../../store/reducers'
+import { IGameState, IMainReducer } from '../../store/reducers'
 
 interface EditGamesProps {
   navigation: any;
 }
-
-
-
 
 
 
@@ -35,13 +32,17 @@ const EditGames: React.FC<EditGamesProps> = ({ navigation }) => {
 
   const dispatch = useDispatch();
   const userRedux = useSelector((state: RootState) => state.userReducer.user);
-  const gamesRedux = useSelector((state: RootState) => state.gameReducer.games);
+  const gamesRedux = useSelector((state: IMainReducer) => state.gameReducer.games);
 
 
   const [loading, setLoading] = useState(false);
 
-  const handleClickButton = useCallback(async () => {
+  useEffect(() => {
 
+  }, [gamesRedux, userRedux])
+
+  const handleClickButton = useCallback(async () => {
+    const games = gamesRedux;
     setLoading(true);
 
     const config = {
@@ -51,7 +52,7 @@ const EditGames: React.FC<EditGamesProps> = ({ navigation }) => {
       }
     };
 
-    const data = {
+    let data = {
       "type": type,
       "description": description,
       "range": range,
@@ -64,15 +65,16 @@ const EditGames: React.FC<EditGamesProps> = ({ navigation }) => {
     try {
 
       await api.post('/games', data, config).then(async (response) => {
-
-        const games = gamesRedux;
-        games.push(data);
-
-        await dispatch(saveGames(games));
-        Alert.alert('Jogo criado com sucesso!')
-        setLoading(false);
+        if (games !== undefined) {
+          games.push(response.data)
+        }
       });
+
+      await dispatch(saveGames(games));
+      Alert.alert('Jogo criado com sucesso!')
+      setLoading(false);
     } catch (error) {
+      console.log('=> erro', error)
       setLoading(false);
       Alert.alert('Erro ao criar game!')
     }

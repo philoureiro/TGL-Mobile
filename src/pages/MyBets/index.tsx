@@ -11,7 +11,7 @@ import { useSelector } from 'react-redux'
 import { RootState } from '../../store'
 import { Alert } from 'react-native';
 import { IGameState, IMainReducer } from '../../store/reducers';
-import { set } from 'react-native-reanimated';
+import { color, set } from 'react-native-reanimated';
 
 
 interface MyBetsProps {
@@ -84,7 +84,7 @@ const MyBets: React.FC<MyBetsProps> = ({ navigation }) => {
       Alert.alert('Erro ao buscar dados na api.')
 
     }
-  }, [gamesSelecteds, games])
+  }, [gamesSelecteds, gamesRedux.games])
 
   const handleClickTypeGame = useCallback((game) => {
     if (gamesSelecteds.length > 0) {
@@ -99,18 +99,6 @@ const MyBets: React.FC<MyBetsProps> = ({ navigation }) => {
 
   }, [gamesSelecteds])
 
-  const returnFilteredsBets = useCallback(() => {
-    return betsOfUserOnTheApi.map((bet: any, index: number) => {
-      const date = bet.updated_at.split(' ')[0].replaceAll('-', '/')
-      const price = `(R$ ${bet.price.toFixed(2).replace('.', ',')})`
-      const color = games.filter((game) => game.type === bet.type)[0].color
-      return (
-        <CardOfIndividualGame onPress={() => { }} color={color} key={index + 1} hasIconTrash={false} numbersSelecteds={bet.numbers_selecteds}
-          price={price} date={date} type={bet.type}
-        ></CardOfIndividualGame>
-      )
-    })
-  }, [betsOfUserOnTheApi]);
 
   const renderItem = useCallback(({ item }) => {
     return (
@@ -118,8 +106,27 @@ const MyBets: React.FC<MyBetsProps> = ({ navigation }) => {
         colorText={item.color} nameButton={item.type} isSelected={gamesSelecteds.includes(item)} >
       </ButtonTypeOfGame >
     )
-  }, [gamesSelecteds]);
+  }, [gamesSelecteds, gamesRedux.games]);
 
+
+  const returnFilteredsBets = useCallback(() => {
+    return betsOfUserOnTheApi.map((bet: any, index: number) => {
+      const date = bet.updated_at.split(' ')[0].replaceAll('-', '/')
+      const price = `(R$ ${bet.price.toFixed(2).replace('.', ',')})`
+      let game: any;
+
+      if (games !== undefined) {
+        game = games.filter((game) => game.type === bet.type)[0]
+        console.log('=>GAMES', color)
+      }
+
+      return (
+        <CardOfIndividualGame onPress={() => { }} color={game !== undefined ? game.color : '#fff'} key={index + 1} hasIconTrash={false} numbersSelecteds={bet.numbers_selecteds}
+          price={price} date={date} type={bet.type}
+        ></CardOfIndividualGame>
+      )
+    })
+  }, [betsOfUserOnTheApi]);
 
   return (
     <>
@@ -159,4 +166,3 @@ const MyBets: React.FC<MyBetsProps> = ({ navigation }) => {
 }
 
 export default MyBets;
-

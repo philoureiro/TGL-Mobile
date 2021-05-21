@@ -28,9 +28,6 @@ const SignIn: React.FC<SignInProps> = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
 
   const dispatch = useDispatch();
-  const userRedux = useSelector((state: RootState) => state.userReducer.user);
-
-
 
   const handleClickLogin = useCallback(async () => {
     setLoading(true);
@@ -59,6 +56,7 @@ const SignIn: React.FC<SignInProps> = ({ navigation }) => {
         }
 
         await dispatch(saveDataOfUser(userData));
+        setLoading(false);
       })
 
       const config = {
@@ -71,10 +69,9 @@ const SignIn: React.FC<SignInProps> = ({ navigation }) => {
       await api.get('/games', config).then(async response => {
         await dispatch(saveGames(response.data));
         setLoading(false);
-        navigation.navigate('TabNavigator')
       })
 
-
+      navigation.navigate('TabNavigator')
     } catch (error) {
       setLoading(false);
       console.log(error)
