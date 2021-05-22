@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { AnyIfEmpty, useDispatch, useSelector } from 'react-redux';
 import { IMainReducer } from '../../store/reducers';
 
 
@@ -28,6 +28,14 @@ interface IBet {
     numbersSelecteds: string;
 }
 
+interface IBetState {
+    "color": string;
+    "date": string;
+    "numbers_selecteds": string;
+    "price": number;
+    "type": string;
+}
+
 const Cart: React.FC<CartProps> = ({ navigation }) => {
 
     const gamesRedux = useSelector((state: IMainReducer) => state.gameReducer)
@@ -47,9 +55,11 @@ const Cart: React.FC<CartProps> = ({ navigation }) => {
         betRedux.myBets.forEach((bet: any, index: number) => {
             if (bet === undefined) {
                 dispatch(deleteBetOfCart(bet));
-                //.toFixed(2).replace('.', ',')})`
+
             } else {
-                const price = `(R$ ${bet.price.toFixed(2).replace('.', ',')})`
+
+                console.log(bet)
+                let price = `(${parseFloat(bet.price).toFixed(2).replace('.', ',')})`;
                 const numbers_selecteds = bet.numbers_selecteds
                 itensCart.push(
                     <CardOfIndividualGame key={index + 1} onPress={() => dispatch(deleteBetOfCart(bet))} color={bet.color} hasIconTrash={true} numbersSelecteds={numbers_selecteds}
@@ -69,11 +79,10 @@ const Cart: React.FC<CartProps> = ({ navigation }) => {
             if (bet === undefined) {
                 dispatch(deleteBetOfCart(bet));
             } else {
-                price += bet.price
+                price += parseFloat(`${bet.price}`);
             }
         })
-        // console.log(typeof price)
-        // price = parseFloat(price);
+
         return price.toFixed(2).replace('.', ',');
     }, [betRedux.myBets])
 

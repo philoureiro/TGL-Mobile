@@ -1,9 +1,12 @@
 import React, { useState, useCallback, useEffect } from 'react';
+import FormData from 'form-data';
+import * as FileSystem from 'expo-file-system';
 import {
   Container, BoxAvatar, BoxButtonCard, Button, TextButton, BoxIconEye,
   TextInput, ActivityIndicator, BoxButtonSave, BoxCameraOrGalery,
   BoxIconCameraOrGalery, Avatar
 } from './styles';
+import { Image } from 'react-native';
 import { Alert } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux';
 import CustomHeader from '../../components/CustomHeader';
@@ -39,15 +42,13 @@ const Account: React.FC<AccountProps> = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [secureText, setSecureText] = useState(true);
-  const [image, setImage] = useState<IImageProps>();
   const [dataApi, setDataAPI] = useState();
   const dispatch = useDispatch();
 
   const userRedux = useSelector((state: RootState) => state.userReducer.user);
+  const [userImage, SetUserImage] = useState('');
+  const [imageGallery, setImageGallery] = useState<IImageProps>();
 
-  useEffect(() => {
-
-  }, [image])
 
   const handleClickLogin = useCallback(async () => {
     setLoading(true);
@@ -96,19 +97,47 @@ const Account: React.FC<AccountProps> = ({ navigation }) => {
   }, [name, email, password]);
 
   const handleClickLibrary = useCallback(async () => {
-    ImagePicker.requestCameraPermissionsAsync();
-    let result: any = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
+    try {
+      ImagePicker.requestCameraPermissionsAsync();
+      let file: any = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
 
+      const config = {
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${userRedux.token.token}`,
+          'Content-Type': 'multipart/form-data',
+        },
+      };
 
-    if (!result.cancelled) {
-      setImage(result.uri);
+      if (!file.cancelled) {
+        setImageGallery(file);
+        console.log(imageGallery)
+
+        const data = new FormData();
+        data.append('file', {
+          name: userRedux.email,
+          uri: imageGallery?.uri
+        });
+
+        await api.put(userImage, data, config).then((response) => {
+          console.log(response.data)
+          Alert.alert('Imagem salva com sucesso.')
+          SetUserImage(`http://127.0.0.1:3333/files/${response.data.file}`)
+        })
+      }
+
+    } catch (error) {
+      console.log('=>error', error)
+      Alert.alert('Erro ao salvar arquivo.')
+
     }
-  }, [image])
+
+  }, [imageGallery])
 
   const handleClickCamera = useCallback(async () => {
     ImagePicker.requestCameraPermissionsAsync();
@@ -120,9 +149,37 @@ const Account: React.FC<AccountProps> = ({ navigation }) => {
     });
 
     if (!result.cancelled) {
-      setImage(result.uri);
+      setImageGallery(result.uri);
     }
-  }, [image])
+  }, [imageGallery])
+
+
+  useEffect(() => {
+
+
+    try {
+
+      async function loadingDataOnTheAPI() {
+        const config = {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${userRedux.token.token}`
+          }
+        }
+
+        await api.get('files/', config).then((response) => {
+          SetUserImage(`http://127.0.0.1:3333/files/${response.data}`)
+        })
+      }
+
+      loadingDataOnTheAPI();
+    } catch (error) {
+      console.log('=>error', error)
+      Alert.alert('Não foi possível buscar uma imagem.')
+
+    }
+
+  }, [imageGallery?.uri])
 
 
   return (
@@ -131,10 +188,7 @@ const Account: React.FC<AccountProps> = ({ navigation }) => {
       <Container>
         <BoxAvatar>
           <Avatar style={{ flex: 1, resizeMode: 'cover', borderRadius: 100 }}
-            source={{
-              uri: `${image}`,
-            }}>
-
+            source={{ uri: userImage }}>
           </Avatar>
         </BoxAvatar>
         <BoxCameraOrGalery>

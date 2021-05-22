@@ -117,7 +117,6 @@ const MyBets: React.FC<MyBetsProps> = ({ navigation }) => {
 
       if (games !== undefined) {
         game = games.filter((game) => game.type === bet.type)[0]
-        console.log('=>GAMES', color)
       }
 
       return (
