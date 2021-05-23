@@ -22,7 +22,6 @@ import Card from '../../components/Card'
 import * as ImagePicker from 'expo-image-picker';
 
 
-
 interface AccountProps {
   navigation: any
 }
