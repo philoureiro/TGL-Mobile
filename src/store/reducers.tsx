@@ -32,7 +32,7 @@ export interface IGameState {
 export interface IBetState {
   myBets: [
     {
-      type: string,
+      id: number,
       price: number,
       color: string,
       numbers_selecteds: string,
@@ -110,7 +110,7 @@ export const betReducer = (state: IBetState = MyBetsState,
   switch (action.type) {
     case SAVE_BETS_OF_CART:
       const arrayBets = state.myBets;
-      // console.log(action.bet);
+
       //console.log('typeeeee =>', typeof action.bet.numbers_selecteds);
       arrayBets.push(action.bet)
 

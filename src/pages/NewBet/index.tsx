@@ -26,6 +26,7 @@ interface NewBetProps {
 }
 
 interface IGame {
+  id: number,
   numbers_selecteds: string;
   color: string;
   price: number;
@@ -131,6 +132,7 @@ const NewBet: React.FC<NewBetProps> = ({ navigation }) => {
     } else {
       let newBet: IGame = {
         type: gameSelected.type,
+        id: gameSelected.id,
         price: gameSelected.price,
         date: dataFormat,
         color: gameSelected.color,

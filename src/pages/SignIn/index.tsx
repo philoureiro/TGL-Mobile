@@ -67,6 +67,7 @@ const SignIn: React.FC<SignInProps> = ({ navigation }) => {
       }
 
       await api.get('/games', config).then(async response => {
+        // console.log('=>', response.data)
         await dispatch(saveGames(response.data));
         setLoading(false);
       })

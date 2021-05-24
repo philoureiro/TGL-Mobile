@@ -23,17 +23,18 @@ interface CartProps {
 }
 
 interface IBet {
-    type: string;
+    id: number;
     price: number;
     numbersSelecteds: string;
 }
 
 interface IBetState {
-    "color": string;
-    "date": string;
-    "numbers_selecteds": string;
-    "price": number;
-    "type": string;
+    color: string;
+    date: string;
+    numbers_selecteds: string;
+    price: number;
+    type: string;
+    id: number
 }
 
 const Cart: React.FC<CartProps> = ({ navigation }) => {
@@ -103,8 +104,9 @@ const Cart: React.FC<CartProps> = ({ navigation }) => {
                 let cart: IBet[] = [];
 
                 betRedux.myBets.forEach((bet) => {
+                    console.log('asdfsd', bet)
                     const currentBet = {
-                        type: bet.type,
+                        id: bet.id,
                         price: bet.price,
                         numbersSelecteds: bet.numbers_selecteds,
                     }

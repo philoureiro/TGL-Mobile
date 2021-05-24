@@ -30,17 +30,6 @@ interface IGameProps {
 }
 
 
-interface infoOfGamesProps {
-  types: [{
-    type: string,
-    description: string;
-    range: number,
-    price: number,
-    'max-number': number,
-    color: string,
-    'min-cart-value': number,
-  }]
-}
 
 const MyBets: React.FC<MyBetsProps> = ({ navigation }) => {
 
@@ -66,10 +55,10 @@ const MyBets: React.FC<MyBetsProps> = ({ navigation }) => {
     try {
       async function loadingDataOnTheAPI() {
         filter = gamesSelecteds.map((game) => {
-          return (game.type);
+          return (game.id);
         })
         await api.post('/bets/filter', { filter: filter }, config).then(response => {
-          //console.log('=>', response.data)
+
           SetBetsOfUserOnTheApi(response.data)
           setLoading(false);
           // });
@@ -90,7 +79,7 @@ const MyBets: React.FC<MyBetsProps> = ({ navigation }) => {
     if (gamesSelecteds.length > 0) {
 
       gamesSelecteds.includes(game)
-        ? setGamesSelecteds(gamesSelecteds.filter(element => game.type !== element.type))
+        ? setGamesSelecteds(gamesSelecteds.filter(element => game !== element))
         :
         setGamesSelecteds([...gamesSelecteds, game])
     } else {
@@ -98,6 +87,7 @@ const MyBets: React.FC<MyBetsProps> = ({ navigation }) => {
     }
 
   }, [gamesSelecteds])
+
 
 
   const renderItem = useCallback(({ item }) => {
@@ -111,17 +101,18 @@ const MyBets: React.FC<MyBetsProps> = ({ navigation }) => {
 
   const returnFilteredsBets = useCallback(() => {
     return betsOfUserOnTheApi.map((bet: any, index: number) => {
-      const date = bet.updated_at.split(' ')[0].replaceAll('-', '/')
+
+      const date = bet.date.replaceAll('-', '/');
       const price = `(R$ ${bet.price.toFixed(2).replace('.', ',')})`
       let game: any;
 
       if (games !== undefined) {
-        game = games.filter((game) => game.type === bet.type)[0]
+        game = games.filter((game) => game.id === bet.game_id)[0]
       }
 
       return (
         <CardOfIndividualGame onPress={() => { }} color={game !== undefined ? game.color : '#fff'} key={index + 1} hasIconTrash={false} numbersSelecteds={bet.numbers_selecteds}
-          price={price} date={date} type={bet.type}
+          price={price} date={date} type={bet.game_type}
         ></CardOfIndividualGame>
       )
     })
