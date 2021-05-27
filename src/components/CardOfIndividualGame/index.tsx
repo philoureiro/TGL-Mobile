@@ -18,7 +18,9 @@ interface CardOfIndividualGameProps {
   color: string;
 }
 
-const CardOfIndividualGame: React.FC<CardOfIndividualGameProps> = ({ numbersSelecteds, color, hasIconTrash, price, date, type, onPress }) => {
+const CardOfIndividualGame: React.FC<CardOfIndividualGameProps> = ({
+  numbersSelecteds, color, hasIconTrash, price, date, type, onPress
+}) => {
 
 
 

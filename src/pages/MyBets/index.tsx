@@ -91,6 +91,7 @@ const MyBets: React.FC<MyBetsProps> = ({ navigation }) => {
 
 
   const renderItem = useCallback(({ item }) => {
+
     return (
       <ButtonTypeOfGame key={item.id} onPress={() => handleClickTypeGame(item)} colorButton={item.color}
         colorText={item.color} nameButton={item.type} isSelected={gamesSelecteds.includes(item)} >
@@ -102,7 +103,7 @@ const MyBets: React.FC<MyBetsProps> = ({ navigation }) => {
   const returnFilteredsBets = useCallback(() => {
     return betsOfUserOnTheApi.map((bet: any, index: number) => {
 
-      const date = bet.date.replaceAll('-', '/');
+      const date = bet.updated_at.split('T')[0].replaceAll('-', '/')
       const price = `(R$ ${bet.price.toFixed(2).replace('.', ',')})`
       let game: any;
 
@@ -112,7 +113,7 @@ const MyBets: React.FC<MyBetsProps> = ({ navigation }) => {
 
       return (
         <CardOfIndividualGame onPress={() => { }} color={game !== undefined ? game.color : '#fff'} key={index + 1} hasIconTrash={false} numbersSelecteds={bet.numbers_selecteds}
-          price={price} date={date} type={bet.game_type}
+          price={price} date={date} type={game.type}
         ></CardOfIndividualGame>
       )
     })
