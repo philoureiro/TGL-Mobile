@@ -64,7 +64,6 @@ const NewBet: React.FC<NewBetProps> = ({ navigation }) => {
 
   useEffect(() => {
 
-    //console.log('numbersSelecteds', numbersSelectedsInCart);
   }), [gameSelected, numbersSelectedsInCart];
 
   const handleClickTypeGame = useCallback((game) => {
